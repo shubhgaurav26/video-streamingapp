@@ -1,3 +1,10 @@
-const GOOGLE_API_KEY = "AIzaSyBYvVJQ8XqjS0WFriL69yoPCt0ryQuKhpg";
+const GOOGLE_API_KEY = "AIzaSyBG51_fPT4uhkArcbQdyZHpDHxYoBV55NA";
 
-export const YOUTUBE_VIDEOS_API = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&regionCode=US&key=${GOOGLE_API_KEY}`;
+
+
+export const YOUTUBE_VIDEOS_API = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=50&regionCode=IN&key=${GOOGLE_API_KEY}`;
+
+export const YOUTUBE_SEARCH_API="http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=";
+
+
+ 

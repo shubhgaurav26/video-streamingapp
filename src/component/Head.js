@@ -1,20 +1,73 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import {toggleMenu }from "../utils/appSlice"
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleMenu } from "../utils/appSlice";
+import { YOUTUBE_SEARCH_API } from "../utils/constants";
+import { cacheResults } from "../utils/searchSlice"; 
 
 const Head = () => {
-    const dispatch = useDispatch ();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchCache = useSelector((store) => store.search);
 
-    const toggleMenuHandler =() =>{
-        dispatch(toggleMenu());
-         
-    }; 
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) {
+        
+        if (searchCache[searchQuery]) {
+          setSuggestions(searchCache[searchQuery]);
+        } else {
+          getSearchedSuggestions(); 
+        }
+      } else {
+        setSuggestions([]); 
+      }
+    }, 500);
+
+    return () => clearTimeout(timer); 
+  }, [searchQuery, searchCache]);
+
+  const getSearchedSuggestions = async () => {
+    console.log("API CALL-" + searchQuery);
+    const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
+    const json = await data.json();
+    setSuggestions(json[1]); 
+
+  
+    dispatch(cacheResults({ [searchQuery]: json[1] }));
+  };
+
+  const toggleMenuHandler = () => {
+    dispatch(toggleMenu());
+  };
+
+ 
+  const handleClickOutside = (e) => {
+    if (!e.target.closest(".search-container")) {
+      setShowSuggestions(false);
+    }
+  };
+
+  useEffect(() => {
+
+    const handleScroll = () => setShowSuggestions(false);
+    window.addEventListener("scroll", handleScroll);
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="flex items-center justify-between px-4 py-2 shadow-md">
-      {/* Left Section */}
+     
       <div className="flex items-center space-x-4">
         <img
-        onClick ={() => toggleMenuHandler ()}   
+          onClick={() => toggleMenuHandler()}
           alt="Menu icon for navigation"
           src="https://icons.veryicon.com/png/o/miscellaneous/linear-icon-45/hamburger-menu-4.png"
           className="h-8 w-8 cursor-pointer"
@@ -26,22 +79,42 @@ const Head = () => {
         />
       </div>
 
-      {/* Center Section */}
-      <div className="flex items-center w-1/2 space-x-2">
-        <input
-          type="text"
-          placeholder="Search"
-          className="flex-grow border border-gray-300 rounded-full px-4 py-2 focus:outline-none"
-        />
-        <button
-          type="button"
-          className="bg-gray-100 border border-gray-300 rounded-full px-4 py-2 hover:bg-gray-200"
-        >
-          🔍
-        </button>
+
+      <div className="relative flex items-center w-1/2 space-x-2 search-container">
+ 
+        <div className="flex items-center w-full border border-gray-300 rounded-full px-4 py-2 focus:outline-none">
+          <input
+            type="text"
+            placeholder="Search"
+            className="w-full border-none focus:outline-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setShowSuggestions(false)}
+          />
+          <button
+            type="button"
+            className="bg-gray-100 border border-gray-300 rounded-full px-4 py-2 hover:bg-gray-200"
+          >
+            🔍
+          </button>
+        </div>
+
+       
+        {showSuggestions && (
+          <div className="absolute top-full left-0 w-full bg-white shadow-lg max-h-60 overflow-y-auto mt-2">
+            <ul>
+              {suggestions.map((s, index) => (
+                <li key={index} className="px-5 py-2 border-b text-gray-700">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
-      {/* Right Section */}
+   
       <div className="flex items-center space-x-4">
         <img
           alt="User profile icon"

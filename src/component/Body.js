@@ -1,7 +1,8 @@
 import React from "react";
+import { Outlet } from "react-router-dom";
 
 import Side from "./Side";
-import MainContainer from "./MainContainer";
+
 
 
 
@@ -10,7 +11,9 @@ const Body =()=>{
 
         <div className ="grid grid-flow-col">
             <Side/>
-            <MainContainer/>
+            <Outlet/>
+            
+          
            
             
         </div>
