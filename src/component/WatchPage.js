@@ -20,9 +20,9 @@ const WatchPage = () => {
          
     },[])
     return (
-        <div className="flex flex-col">
-        <div className="px-5 flex">
-            <div className >
+        <div className="flex flex-col w-full">
+        <div className="px-5 flex w-full">
+        <div className="" >
            <iframe 
            width="1200" 
            height="600" 
@@ -35,8 +35,9 @@ const WatchPage = () => {
 
            </div>
            
-           <div>
-           {/* <LiveChat/> */}
+           <div className = "w-full">
+            LIVECHAT
+            <LiveChat/>
 
            </div>
         </div>
