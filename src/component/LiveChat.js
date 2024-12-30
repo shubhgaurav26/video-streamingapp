@@ -6,12 +6,11 @@ import { generateRandomName } from "../utils/helper";
 
 const LiveChat = () => {
   const [liveMessage, setLiveMessage] = useState("");
-
   const dispatch = useDispatch();
   const chatMessages = useSelector((store) => store.chat.messages);
 
   useEffect(() => {
-    const i = setInterval(() => {
+    const intervalId = setInterval(() => {
       dispatch(
         addMessage({
           name: generateRandomName(),
@@ -19,42 +18,47 @@ const LiveChat = () => {
         })
       );
     }, 2000);
-    return () => clearInterval(i);
-  }, []);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch]);
+
+  const handleMessageSubmit = (e) => {
+    e.preventDefault();
+    if (liveMessage.trim()) {
+      dispatch(
+        addMessage({
+          name: "You",
+          message: liveMessage,
+        })
+      );
+      setLiveMessage("");
+    }
+  };
 
   return (
     <>
-      <div className="w-full h-[600px] ml-2 p-2 border border-black bg-slate-200 rounded-lg overflow-y-scroll flex flex-col-reverse">
+      {/* Chat Container */}
+      <div className="w-full h-[600px] ml-2 p-4 border border-blue-200 bg-blue-50 rounded-lg overflow-y-scroll flex flex-col-reverse shadow-md">
         <div>
           {chatMessages.map((c, i) => (
             <ChatMessage key={i} name={c.name} message={c.message} />
           ))}
         </div>
       </div>
+
+      {/* Message Input Form */}
       <form
-        className="mt-2 flex"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (liveMessage.trim()) {
-            console.log("On form submit", liveMessage);
-            dispatch(
-              addMessage({
-                name: "You",
-                message: liveMessage,
-              })
-            );
-            setLiveMessage("");
-          }
-        }}
+        className="mt-4 flex p-3 bg-white rounded-lg shadow-lg border border-blue-200"
+        onSubmit={handleMessageSubmit}
       >
         <input
           type="text"
           placeholder="Type your message..."
-          className="flex-grow p-2 border border-gray-400 rounded-lg"
+          className="flex-grow p-3 border border-blue-300 rounded-lg text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={liveMessage}
           onChange={(e) => setLiveMessage(e.target.value)}
         />
-        <button className="ml-2 p-2 bg-blue-500 text-white rounded-lg">
+        <button className="ml-3 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
           Send
         </button>
       </form>

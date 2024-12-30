@@ -26,12 +26,14 @@ const appRouter = createBrowserRouter([
 
 function App() {
   return (
+    <div className="bg-blue-100 text-gray-800 min-h-screen">
     <Provider store={store}>
       <div className="App">
         <Head/>  
         <RouterProvider router={appRouter} />
       </div>
     </Provider>
+     </div>
   );
 }
 

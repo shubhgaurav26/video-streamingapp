@@ -4,34 +4,34 @@ import VideoCard from "./VideoCard";
 import { Link } from "react-router-dom";
 
 const VideoContainer = () => {
-    const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState([]);
 
-    useEffect(() => {
-        getVideos();
-    }, []);
+  useEffect(() => {
+    getVideos();
+  }, []);
 
-    const getVideos = async () => {
-        try {
-            const data = await fetch(YOUTUBE_VIDEOS_API);
-            const json = await data.json();
-            console.log(json.items);
-            setVideos(json.items);
-        } catch (error) {
-            console.error("Error fetching videos:", error);
-        }
-    };
+  const getVideos = async () => {
+    try {
+      const data = await fetch(YOUTUBE_VIDEOS_API);
+      const json = await data.json();
+      console.log(json.items);
+      setVideos(json.items);
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    }
+  };
 
-    return (
-        <div className="flex flex-wrap">
-            {videos.map((video) => (
-                <div key={video.id}> 
-                    <Link to={"/watch?v=" + video.id}>
-                        <VideoCard info={video} />
-                    </Link>
-                </div>
-            ))}
+  return (
+    <div className="flex flex-wrap">
+      {videos.map((video) => (
+        <div key={video.id}>
+          <Link to={"/watch?v=" + video.id}>
+            <VideoCard info={video} />
+          </Link>
         </div>
-    );
+      ))}
+    </div>
+  );
 };
 
 export default VideoContainer;
